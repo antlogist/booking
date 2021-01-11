@@ -70,17 +70,9 @@ function build_calendar($month, $year) {
       $calendar.= "<td class=" . $today ."><h4>$currentDay</h4><a href='book.php?date=" . $date . "' class='btn btn-success btn-sm'>Book</a></td>";
     }
     
-//    if ($datetoday == $date) {
-//      $calendar.= "<td class='table-active'><h4>$currentDay</h4></td>";
-//    } else {
-//      $calendar.= "<td><h4>$currentDay</h4></td>";
-//    }
-    
-    
     // Incrementing the counters
     $currentDay++;
-    $dayOfWeek++;
-      
+    $dayOfWeek++;  
   }
   
   // Last week row in a month
@@ -117,7 +109,7 @@ function build_calendar($month, $year) {
 
 <body>
   <div class="container">
-    <h1>Booking System</h1>
+    <h1 class="text-center">Booking System</h1>
 
     <?php 
       $dateComponents = getdate();
