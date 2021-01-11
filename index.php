@@ -18,8 +18,14 @@ function build_calendar($month, $year) {
 
   // HTML table
   $calendar = "<table class='table table-bordered table-responsive'>";
-  $calendar.= "<center><h2>$monthName $year</h2></center>";
-//  
+  $calendar.= "<center class='mb-3'><h2>$monthName $year</h2><br>";
+  
+  $calendar.= "<a href='?month=" . date("m", mktime(0, 0, 0, $month-1, 1, $year)) . "&year=" .date("Y", mktime(0, 0, 0, $month-1, 1, $year)) . "' class='btn btn-primary'>Previous month</a>";
+  
+  $calendar.= "<a href='?month=" . date("m") . "&year=" .date("Y") . "' class='btn btn-primary'>Current month</a>";
+  
+  $calendar.= "<a href='?month=" . date("m", mktime(0, 0, 0, $month+1, 1, $year)) . "&year=" .date("Y", mktime(0, 0, 0, $month+1, 1, $year)) . "' class='btn btn-primary'>Next month</a></center>";
+  
   $calendar.= "<thead>";
   $calendar.= "<tr>";
   
@@ -80,7 +86,7 @@ function build_calendar($month, $year) {
   $calendar.= "</tr>";
   $calendar.= "</table>";
   
-  echo $calendar;
+  return $calendar;
   
 }
 
@@ -102,17 +108,21 @@ function build_calendar($month, $year) {
 </head>
 
 <body>
- <div class="container">
+  <div class="container">
     <h1>Booking System</h1>
 
     <?php 
       $dateComponents = getdate();
-      $month = $dateComponents["mon"];
-      $year = $dateComponents["year"];
-   
-      echo build_calendar($month, $year);
+      if(isset($_GET['month']) && isset($_GET['year'])){
+        $month = $_GET['month']; 			     
+        $year = $_GET['year'];
+      }else{
+        $month = $dateComponents['mon']; 			     
+        $year = $dateComponents['year'];
+      }
+      echo build_calendar($month,$year);
     ?>
- </div>
+  </div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
