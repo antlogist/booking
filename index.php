@@ -17,7 +17,7 @@ function build_calendar($month, $year) {
   $datetoday = date("Y-m-d");
 
   // HTML table
-  $calendar = "<table class='table'>";
+  $calendar = "<table class='table table-bordered table-responsive'>";
   $calendar.= "<center><h2>$monthName $year</h2></center>";
 //  
   $calendar.= "<thead>";
@@ -34,7 +34,7 @@ function build_calendar($month, $year) {
   // Only 7 columns on table
   if ($dayOfWeek > 0) {
     for ($k=0; $k<$dayOfWeek; $k++) {
-      $calendar.= "<td></td>";
+      $calendar.= "<td width='14.2%'></td>";
     }
   }
   
@@ -55,7 +55,13 @@ function build_calendar($month, $year) {
     
     $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
     $date = "$year-$month-$currentDayRel";
-    $calendar.= "<td><h4>$currentDay</h4></td>";
+    
+    if ($datetoday == $date) {
+      $calendar.= "<td class='table-active'><h4>$currentDay</h4></td>";
+    } else {
+      $calendar.= "<td><h4>$currentDay</h4></td>";
+    }
+    
     
     // Incrementing the counters
     $currentDay++;
