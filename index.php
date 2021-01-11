@@ -62,11 +62,19 @@ function build_calendar($month, $year) {
     $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
     $date = "$year-$month-$currentDayRel";
     
-    if ($datetoday == $date) {
-      $calendar.= "<td class='table-active'><h4>$currentDay</h4></td>";
+    $today = $date == date("Y-m-d") ? "today" : "";
+    
+    if ($date < date("Y-m-d")) {
+      $calendar.= "<td><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>N/A</a></td>";
     } else {
-      $calendar.= "<td><h4>$currentDay</h4></td>";
+      $calendar.= "<td class=" . $today ."><h4>$currentDay</h4><a href='book.php?date=" . $date . "' class='btn btn-success btn-sm'>Book</a></td>";
     }
+    
+//    if ($datetoday == $date) {
+//      $calendar.= "<td class='table-active'><h4>$currentDay</h4></td>";
+//    } else {
+//      $calendar.= "<td><h4>$currentDay</h4></td>";
+//    }
     
     
     // Incrementing the counters
