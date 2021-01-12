@@ -1,6 +1,26 @@
 <?php 
 
 function build_calendar($month, $year) {
+  
+  include_once "includes/dbh.include.php";
+  
+  $mysqli = $conn;
+  $stmt = $mysqli->prepare("select * from bookings where MONTH(date) = ? AND YEAR(date) = ?");
+  $stmt->bind_param('ss', $month, $year);
+  $bookings = array();
+  
+  if($stmt->execute()){
+      $result = $stmt->get_result();
+      if($result->num_rows>0){
+          while($row = $result->fetch_assoc()){
+              $bookings[] = $row['date'];
+          }
+
+          $stmt->close();
+      }
+  }
+  
+  
   // Days of week
   $daysOfWeek = array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
   // First day of the month. mktime() - Return the Unix timestamp for a date
@@ -62,11 +82,13 @@ function build_calendar($month, $year) {
     $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
     $date = "$year-$month-$currentDayRel";
     
-    $today = $date == date("Y-m-d") ? "today" : "";
+    $today = $date == date("Y-m-d") ? "table-active" : "";
     
     if ($date < date("Y-m-d")) {
       $calendar.= "<td><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>N/A</a></td>";
-    } else {
+    } elseif(in_array($date, $bookings)){
+      $calendar.= "<td><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>Already Booked</a></td>";
+    }else {
       $calendar.= "<td class=" . $today ."><h4>$currentDay</h4><a href='book.php?date=" . $date . "' class='btn btn-success btn-sm'>Book</a></td>";
     }
     
