@@ -20,7 +20,6 @@ function build_calendar($month, $year) {
       }
   }
   
-  
   // Days of week
   $daysOfWeek = array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
   // First day of the month. mktime() - Return the Unix timestamp for a date
@@ -85,11 +84,11 @@ function build_calendar($month, $year) {
     $today = $date == date("Y-m-d") ? "table-active" : "";
     
     if ($date < date("Y-m-d")) {
-      $calendar.= "<td><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>N/A</a></td>";
+      $calendar.= "<td style='width: 14%;'><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>N/A</a></td>";
     } elseif(in_array($date, $bookings)){
-      $calendar.= "<td><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>Already Booked</a></td>";
+      $calendar.= "<td style='width: 14%;'><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>Already Booked</a></td>";
     }else {
-      $calendar.= "<td class=" . $today ."><h4>$currentDay</h4><a href='book.php?date=" . $date . "' class='btn btn-success btn-sm'>Book</a></td>";
+      $calendar.= "<td style='width: 14%;' class=" . $today ."><h4>$currentDay</h4><a href='book.php?date=" . $date . "' class='btn btn-success btn-sm'>Book</a></td>";
     }
     
     // Incrementing the counters
