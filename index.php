@@ -82,7 +82,7 @@ function build_calendar($month, $year) {
     $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
     $date = "$year-$month-$currentDayRel";
     
-    $today = $date == date("Y-m-d") ? "today" : "";
+    $today = $date == date("Y-m-d") ? "table-active" : "";
     
     if ($date < date("Y-m-d")) {
       $calendar.= "<td><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>N/A</a></td>";
