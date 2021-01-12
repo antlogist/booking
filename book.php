@@ -1,3 +1,25 @@
+<?php 
+
+include_once "includes/dbh.include.php";
+
+  if(isset($_GET['date'])) {
+    $date = $_GET['date'];
+  }
+
+  if(isset($_POST['submit'])) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $mysqli = $conn;
+    $stmt = $mysqli->prepare("INSERT INTO bookings (name, email, date) VALUES (?,?,?)");
+    $stmt->bind_param('sss', $name, $email, $date);
+    $stmt->execute();
+    $msg = "<div class='alert alert-success'>Booking Successful!</div>";
+    $stmt->close();
+    $mysqli->close();
+  }
+?>
+
+
 <html lang="en">
 
 <head>
@@ -13,9 +35,10 @@
 
 <body>
   <div class="container">
-    <h1 class="text-center">Book for date: </h1>
+    <h1 class="text-center">Book for date: <?php echo date("m/d/Y", strtotime($date)); ?></h1>
     <div class="row">
       <div class="col-md-6 offset-md-3 my-5">
+       <?php echo isset($msg) ? $msg : ""; ?>
         <form action="" method="post">
           <div class="mb-3">
             <label for="inputEmail" class="form-label">Email address</label>
@@ -23,7 +46,7 @@
           </div>
           <div class="mb-3">
             <label for="inputName" class="form-label">Name</label>
-            <input name="name" type="email" class="form-control" id="inputName">
+            <input name="name" type="text" class="form-control" id="inputName">
           </div>
           <button type="submit" name="submit" class="btn btn-primary">Submit</button>
         </form>
