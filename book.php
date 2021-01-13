@@ -29,7 +29,6 @@ $mysqli = $conn;
     
     $stmt = $mysqli->prepare("select * from bookings where date = ? AND timeslot = ?");
     $stmt->bind_param('ss', $date, $timeslot);
-    $bookings = array();
     
     if($stmt->execute()){
         $result = $stmt->get_result();
@@ -44,7 +43,6 @@ $mysqli = $conn;
           $stmt->close();
           $mysqli->close();
         }
-      echo "<meta http-equiv='refresh' content='0'>";
     }
   }
 
