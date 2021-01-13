@@ -18,31 +18,6 @@ include_once "includes/dbh.include.php";
     $mysqli->close();
   }
 
-$duration = 60;
-$cleanup = 0;
-$start = "08:00";
-$end = "18:00";
-
-function timeslots($duration, $cleanup, $start, $end) {
-  $start = new DateTime($start);
-  $end = new DateTime($end);
-  $interval = new DateInterval("PT" . $duration . "M");
-  $cleanupInterval = new DateInterval("PT" . $cleanup . "M");
-  
-  $slots = array();
-  
-  for($intStart = $start; $intStart < $end; $intStart->add($interval)->add($cleanupInterval)) {
-    $endPeriod = clone $intStart;
-    $endPeriod->add($interval);
-    if ($endPeriod > $end) {
-      break;
-    }
-    
-    $slots[] = $intStart->format("H:iA") . "-" . $endPeriod->format("H:iA");
-  }
-  return $slots;
-}
-
 ?>
 
 
@@ -63,9 +38,8 @@ function timeslots($duration, $cleanup, $start, $end) {
   <div class="container">
     <h1 class="text-center">Book for date: <?php echo date("m/d/Y", strtotime($date)); ?></h1>
     <div class="row">
-<!--
       <div class="col-md-6 offset-md-3 my-5">
-       <!--?php echo isset($msg) ? $msg : ""; ?>
+       <?php echo isset($msg) ? $msg : ""; ?>
         <form action="" method="post">
           <div class="mb-3">
             <label for="inputEmail" class="form-label">Email address</label>
@@ -78,17 +52,6 @@ function timeslots($duration, $cleanup, $start, $end) {
           <button type="submit" name="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>
--->
-    <?php $timeslots = timeslots($duration, $cleanup, $start, $end); 
-      foreach ($timeslots as $ts) { ?>
-      
-      <div class="col-md-2 mb-3">
-        <button class="btn btn-success"><?php echo $ts; ?></button>
-      </div>
-      
-    <?php  
-      }
-    ?>
     </div>
   </div>
 
