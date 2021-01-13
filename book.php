@@ -78,11 +78,6 @@ function timeslots($duration, $cleanup, $start, $end) {
     </div>
   </div>
 
-  <!-- Button trigger modal -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal">
-    Launch demo modal
-  </button>
-
   <!-- Modal -->
   <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -96,7 +91,7 @@ function timeslots($duration, $cleanup, $start, $end) {
           <div class="modal-body">
             <div class="mb-3">
               <label for="inputTime" class="form-label">Time</label>
-              <input readonly name="time" type="text" class="form-control" id="inputTime">
+              <input readonly name="timeslot" type="text" class="form-control" id="inputTime">
             </div>
             <div class="mb-3">
               <label for="inputEmail" class="form-label">Email address</label>
