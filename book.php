@@ -63,7 +63,7 @@ function timeslots($duration, $cleanup, $start, $end) {
   <div class="container">
     <h1 class="text-center">Book for date: <?php echo date("m/d/Y", strtotime($date)); ?></h1>
     <div class="row">
-<!--
+      <!--
       <div class="col-md-6 offset-md-3 my-5">
        <!--?php echo isset($msg) ? $msg : ""; ?>
         <form action="" method="post">
@@ -79,16 +79,50 @@ function timeslots($duration, $cleanup, $start, $end) {
         </form>
       </div>
 -->
-    <?php $timeslots = timeslots($duration, $cleanup, $start, $end); 
+      <?php $timeslots = timeslots($duration, $cleanup, $start, $end); 
       foreach ($timeslots as $ts) { ?>
-      
+
       <div class="col-md-2 mb-3">
         <button class="btn btn-success"><?php echo $ts; ?></button>
       </div>
-      
-    <?php  
+
+      <?php  
       }
     ?>
+    </div>
+  </div>
+
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+  </button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Booking: <span id="slot"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <?php echo isset($msg) ? $msg : ""; ?>
+        <form action="" method="post">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="inputEmail" class="form-label">Email address</label>
+              <input name="email" type="email" class="form-control" id="inputEmail">
+            </div>
+            <div class="mb-3">
+              <label for="inputName" class="form-label">Name</label>
+              <input name="name" type="text" class="form-control" id="inputName">
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
