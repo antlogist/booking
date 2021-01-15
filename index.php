@@ -84,9 +84,14 @@ function build_calendar($month, $year) {
     $today = $date == date("Y-m-d") ? "table-active" : "";
     
     if ($date < date("Y-m-d")) {
-      $calendar.= "<td style='width: 14%;'><h4>$currentDay</h4><a class='btn btn-danger btn-sm'>N/A</a></td>";
+      $calendar.= "<td style='width: 14%;'><h4>$currentDay</h4><a href='#' class='btn btn-danger btn-sm'>N/A</a></td>";
     } else {
-      $calendar.= "<td style='width: 14%;' class=" . $today ."><h4>$currentDay</h4><a href='book.php?date=" . $date . "' class='btn btn-success btn-sm'>Book</a></td>";
+      $totalbookings = checkSlots($mysqli, $date);
+      if ($totalbookings == 10) {
+        $calendar.= "<td style='width: 14%;' class=" . $today ."><h4>$currentDay</h4><a href='#' class='btn btn-danger btn-sm'>All Booked</a></td>";
+      } else {
+        $calendar.= "<td style='width: 14%;' class=" . $today ."><h4>$currentDay</h4><a href='book.php?date=" . $date . "' class='btn btn-success btn-sm'>Book</a></td>"; 
+      }
     }
     
     // Incrementing the counters
@@ -109,9 +114,25 @@ function build_calendar($month, $year) {
   
 }
 
+function checkSlots($mysqli, $date) {
+  $stmt = $mysqli->prepare("select * from bookings where date = ?");
+  $stmt->bind_param('s', $date);
+  $totalbookings = 0;
+  
+  if($stmt->execute()){
+      $result = $stmt->get_result();
+      if($result->num_rows>0){
+          while($row = $result->fetch_assoc()){
+              $totalbookings++;
+          }
+
+          $stmt->close();
+      }
+  }
+  return $totalbookings;
+}
+
 ?>
-
-
 
 <html lang="en">
 
