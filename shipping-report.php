@@ -4,7 +4,7 @@ function build_report() {
   include_once "includes/dbh.include.php";
   $mysqli = $conn; 
   
-  $sql = "SELECT id, name, phone, email, date, address, timeslot FROM bookings";
+  $sql = "SELECT id, date, timeslot, name, phone, email, address, status FROM bookings";
   $result = mysqli_query($mysqli, $sql);
   
   $rows = array();
@@ -30,36 +30,96 @@ function build_report() {
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Hello, world!</title>
-  </head>
-  <body>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+  <title>Hello, world!</title>
+</head>
+
+<body>
+<!--
+  <style>
+    table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    table td {
+      width: 100%;
+    }
+
+  </style>
+-->
+  <div class="container">
     <div id="shippingReport"></div>
+  </div>
 
-    <!-- jQuery and Bootstrap Bundle (includes Popper) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    
-    <script>
-      (function reportRengder() {
-        const reportData = <?php echo build_report(); ?>;
-        
-        
-        
-      })();
-    </script>
-    
-  </body>
+  <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+
+
+  <script>
+    (function reportRender() {
+      const reportData = <?php echo build_report(); ?>;
+
+      if (!reportData.length) {
+        return;
+      }
+
+      // DOM fragment element
+      const fragment = document.createDocumentFragment();
+
+      // Table
+      const table = document.createElement("table");
+      table.classList.add("table", "table-striped", "table-bordered", "table-hover", "table-sm", "table-responsive-md");
+
+      // Head
+      const thead = document.createElement("thead");
+      //      thead.classList.add("thead-dark");
+      const theadTr = document.createElement("tr");
+      thead.appendChild(theadTr);
+
+      // Th
+      const thArr = Object.keys(reportData[0]);
+      thArr.map((item) => {
+        const th = document.createElement("th");
+        th.setAttribute("scope", "col");
+        th.textContent = item;
+        theadTr.appendChild(th);
+      })
+
+      // Body
+      const tbody = document.createElement("tbody");
+      reportData.map((item) => {
+        const tr = document.createElement("tr");
+        const values = Object.values(item);
+        values.map((value) => {
+          const td = document.createElement("td");
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      })
+
+      // Append fragment
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      fragment.appendChild(table);
+      document.getElementById("shippingReport").appendChild(fragment);
+
+
+    })();
+
+  </script>
+
+</body>
+
 </html>
-
-
-
-
-
