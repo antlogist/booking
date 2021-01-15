@@ -43,8 +43,8 @@ function build_report() {
 </head>
 
 <body>
-<!--
   <style>
+/*
     table {
       width: 100%;
       table-layout: fixed;
@@ -53,9 +53,19 @@ function build_report() {
     table td {
       width: 100%;
     }
+*/
+    #shippingReport table {
+      font-size: 14px;
+    }
+    #shippingReport table tr td {
+      vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+      background-color: #9fc51c;
+    }
 
   </style>
--->
   <div class="container">
     <div id="shippingReport"></div>
   </div>
@@ -101,9 +111,14 @@ function build_report() {
       reportData.map((item) => {
         const tr = document.createElement("tr");
         const values = Object.values(item);
-        values.map((value) => {
+        values.map((value, index, arr) => {
           const td = document.createElement("td");
-          td.textContent = value;
+          
+//          if (arr.length === index+1) {
+//              console.log(arr.length, index);
+//          } 
+          
+          td.textContent = arr.length === index+1 ? "pending" : value;
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -114,9 +129,16 @@ function build_report() {
       table.appendChild(tbody);
       fragment.appendChild(table);
       document.getElementById("shippingReport").appendChild(fragment);
-
-
     })();
+    
+//    (function events() {
+//      const el = document.getElementById("shippingReport");
+//      el.addEventListener("mouseover", tableHover);
+//      function tableHover(e) {
+//        const target = e.target;
+//        console.log(target);
+//      }
+//    })();
 
   </script>
 
