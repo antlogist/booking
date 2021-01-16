@@ -94,8 +94,6 @@ function build_report() {
           return;
         }
 
-
-
         // DOM fragment element
         const fragment = document.createDocumentFragment();
 
@@ -112,6 +110,11 @@ function build_report() {
         buttonNext.id = "btnNext";
         buttonNext.classList.add("btn", "btn-sm", "ml-1", "btn-next");
         buttonNext.textContent = "Next";
+        const pageNumber = document.createElement("span");
+        pageNumber.classList.add("text-center");
+        pageNumber.id = "pageNumber";
+        pageNumber.textContent = currentPageNumber;
+        
 
         const iconPrev = document.createElement("i");
         iconPrev.classList.add("fa", "fa-angle-double-left", "mr-1");
@@ -122,6 +125,7 @@ function build_report() {
         buttonNext.insertAdjacentElement("beforeend", iconNext);
 
         paginationWrapper.appendChild(buttonPrev);
+        paginationWrapper.appendChild(pageNumber);
         paginationWrapper.appendChild(buttonNext);
 
         // Table
