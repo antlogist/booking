@@ -179,11 +179,10 @@ function build_report() {
         }
       }
 
+      const buttonPrev = document.getElementById("btnPrev");
+      const buttonNext = document.getElementById("btnNext");
+
       function changePage(val) {
-
-        const buttonPrev = document.getElementById("btnPrev");
-        const buttonNext = document.getElementById("btnNext");
-
         if (val === "next") {
           if (currentPageNumber === totalNumbersOfPages) {
             return;
@@ -203,8 +202,6 @@ function build_report() {
             reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
           }
         }
-
-        const currentPageData = data.slice(0, 2);
       }
 
     })();
