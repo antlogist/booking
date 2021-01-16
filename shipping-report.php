@@ -58,6 +58,10 @@ function build_report() {
     .table-hover tbody tr:hover th {
       background-color: #9fc51c;
     }
+    
+    table tbody tr {
+      cursor: pointer;
+    }
 
   </style>
   <div class="container my-5">
@@ -163,14 +167,14 @@ function build_report() {
           tdButtons.classList.add("text-center");
           
           const deleteButton = document.createElement("button");
-          deleteButton.classList.add("btn", "btn-sm", "btn-danger", "my-1");
+          deleteButton.classList.add("btn", "btn-sm", "btn-danger", "my-1", "btn-delete");
           deleteButton.id = "deleteButton" + values[0];
           const deleteIcon = document.createElement("i");
           deleteIcon.classList.add("fa", "fa-trash");
           deleteButton.appendChild(deleteIcon);
           
           const deliveredButton = document.createElement("button");
-          deliveredButton.classList.add("btn", "btn-sm", "my-1");
+          deliveredButton.classList.add("btn", "btn-sm", "my-1", "btn-delivered");
           deliveredButton.id = "deliveredButton" + values[0];
           const deliveredIcon = document.createElement("i");
           deliveredIcon.classList.add("fa", "fa-check");
