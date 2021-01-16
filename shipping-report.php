@@ -158,6 +158,28 @@ function build_report() {
             td.textContent = arr.length === index + 1 ? "pending" : value;
             tr.appendChild(td);
           });
+          // Status buttons
+          const tdButtons = document.createElement("td");
+          tdButtons.classList.add("text-center");
+          
+          const deleteButton = document.createElement("button");
+          deleteButton.classList.add("btn", "btn-sm", "btn-danger", "my-1");
+          deleteButton.id = "deleteButton" + values[0];
+          const deleteIcon = document.createElement("i");
+          deleteIcon.classList.add("fa", "fa-trash");
+          deleteButton.appendChild(deleteIcon);
+          
+          const deliveredButton = document.createElement("button");
+          deliveredButton.classList.add("btn", "btn-sm", "my-1");
+          deliveredButton.id = "deliveredButton" + values[0];
+          const deliveredIcon = document.createElement("i");
+          deliveredIcon.classList.add("fa", "fa-check");
+          deliveredButton.appendChild(deliveredIcon);
+          
+          tdButtons.appendChild(deleteButton);
+          tdButtons.appendChild(deliveredButton);
+          tr.appendChild(tdButtons);
+          
           tbody.appendChild(tr);
         })
 
