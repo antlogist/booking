@@ -38,8 +38,8 @@ function build_report() {
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-  
-  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
   <title>Hello, world!</title>
 </head>
@@ -72,53 +72,55 @@ function build_report() {
 
   <script>
     (function report() {
-      
+
       const data = <?php echo build_report(); ?>;
       let currentPageNumber = 1;
-      const itemsPerPage = 3;
+      const itemsPerPage = 4;
       const totalNumbersOfPages = Math.ceil(Number(data.length) / itemsPerPage);
-      
+
+      const shippingReport = document.getElementById("shippingReport");
+      shippingReport.addEventListener("click", reportClick);
+
       reportRender(data.slice(0, itemsPerPage));
-      
-      
-      function changePage(page) {
-        
-        const currentPageData = data.slice(0, 2);
-        console.log(currentPageData);
-        reportRender(currentPageData);
-      }
-      
+
 
       function reportRender(data) {
+
+        shippingReport.innerHTML = "";
+
         const reportData = data;
 
         if (!reportData.length) {
           return;
         }
 
+
+
         // DOM fragment element
         const fragment = document.createDocumentFragment();
-        
+
         // Pagination buttons
-        
+
         const paginationWrapper = document.createElement("div");
         paginationWrapper.classList.add("text-center", "my-3");
-        
+
         const buttonPrev = document.createElement("button");
+        buttonPrev.id = "btnPrev";
         buttonPrev.classList.add("btn", "btn-sm", "mr-1", "btn-prev");
         buttonPrev.textContent = "Prev";
         const buttonNext = document.createElement("button");
+        buttonNext.id = "btnNext";
         buttonNext.classList.add("btn", "btn-sm", "ml-1", "btn-next");
         buttonNext.textContent = "Next";
-        
+
         const iconPrev = document.createElement("i");
         iconPrev.classList.add("fa", "fa-angle-double-left", "mr-1");
         buttonPrev.insertAdjacentElement("afterbegin", iconPrev);
-        
+
         const iconNext = document.createElement("i");
         iconNext.classList.add("fa", "fa-angle-double-right", "ml-1");
         buttonNext.insertAdjacentElement("beforeend", iconNext);
-        
+
         paginationWrapper.appendChild(buttonPrev);
         paginationWrapper.appendChild(buttonNext);
 
@@ -162,24 +164,49 @@ function build_report() {
         fragment.appendChild(paginationWrapper);
         document.getElementById("shippingReport").appendChild(fragment);
       }
-      
-      const shippingReport = document.getElementById("shippingReport");
-      shippingReport.addEventListener("click", reportClick);
-      
+
       function reportClick(e) {
         const target = e.target;
-        const buttonPrevEl = target.classList.contains("btn-prev");
-        const buttonNextEl = target.classList.contains("btn-next");
-        
-        if(buttonPrevEl) {
-          console.log("btn-prev-el");
+        const buttonPrevEl = target.classList.contains("btn-prev") || target.parentElement.classList.contains("btn-prev");
+        const buttonNextEl = target.classList.contains("btn-next") || target.parentElement.classList.contains("btn-next");
+
+        if (buttonPrevEl) {
+          changePage("prev");
         }
-        
-        if(buttonNextEl) {
-          console.log("btn-next-el");
+
+        if (buttonNextEl) {
+          changePage("next");
         }
       }
-      
+
+      function changePage(val) {
+
+        const buttonPrev = document.getElementById("btnPrev");
+        const buttonNext = document.getElementById("btnNext");
+
+        if (val === "next") {
+          if (currentPageNumber === totalNumbersOfPages) {
+            return;
+          }
+          currentPageNumber++;
+          reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
+        }
+
+        if (val === "prev") {
+          if (currentPageNumber === 1) {
+            return;
+          }
+          currentPageNumber--;
+          if (currentPageNumber === 1) {
+            reportRender(data.slice(currentPageNumber - 1, itemsPerPage));
+          } else {
+            reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
+          }
+        }
+
+        const currentPageData = data.slice(0, 2);
+      }
+
     })();
 
   </script>
