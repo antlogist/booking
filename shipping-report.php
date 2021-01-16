@@ -38,8 +38,8 @@ function build_report() {
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-  
-  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
   <title>Hello, world!</title>
 </head>
@@ -59,6 +59,22 @@ function build_report() {
       background-color: #9fc51c;
     }
 
+    table tbody tr {
+      cursor: pointer;
+    }
+
+    .page-number {
+      width: 30px;
+      height: 30px;
+      display: inline-block;
+      background-color: darkred;
+      border-radius: 50%;
+      line-height: 30px;
+      color: #FFF;
+      text-shadow: 1px 1px 1px grey;
+      border: 1px solid black;
+    }
+
   </style>
   <div class="container my-5">
     <div id="shippingReport"></div>
@@ -67,29 +83,30 @@ function build_report() {
   <!-- jQuery and Bootstrap Bundle (includes Popper) -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-
-
-
   <script>
     (function report() {
-      
+
       const data = <?php echo build_report(); ?>;
       let currentPageNumber = 1;
-      const itemsPerPage = 3;
-      const totalNumbersOfPages = Math.ceil(Number(data.length) / itemsPerPage);
-      
-      reportRender(data.slice(0, itemsPerPage));
-      
-      
-      function changePage(page) {
-        
-        const currentPageData = data.slice(0, 2);
-        console.log(currentPageData);
-        reportRender(currentPageData);
+      const itemsPerPage = 4;
+      let totalNumbersOfPages = "";
+
+      function totalPagesCount() {
+        totalNumbersOfPages = Math.ceil(Number(data.length) / itemsPerPage);
       }
-      
+
+      totalPagesCount();
+
+      const shippingReport = document.getElementById("shippingReport");
+      shippingReport.addEventListener("click", reportClick);
+
+      reportRender(data.slice(0, itemsPerPage));
+
 
       function reportRender(data) {
+
+        shippingReport.innerHTML = "";
+
         const reportData = data;
 
         if (!reportData.length) {
@@ -98,28 +115,36 @@ function build_report() {
 
         // DOM fragment element
         const fragment = document.createDocumentFragment();
-        
+
         // Pagination buttons
-        
+
         const paginationWrapper = document.createElement("div");
         paginationWrapper.classList.add("text-center", "my-3");
-        
+
         const buttonPrev = document.createElement("button");
+        buttonPrev.id = "btnPrev";
         buttonPrev.classList.add("btn", "btn-sm", "mr-1", "btn-prev");
         buttonPrev.textContent = "Prev";
         const buttonNext = document.createElement("button");
+        buttonNext.id = "btnNext";
         buttonNext.classList.add("btn", "btn-sm", "ml-1", "btn-next");
         buttonNext.textContent = "Next";
-        
+        const pageNumber = document.createElement("span");
+        pageNumber.classList.add("text-center", "page-number");
+        pageNumber.id = "pageNumber";
+        pageNumber.textContent = currentPageNumber;
+
+
         const iconPrev = document.createElement("i");
         iconPrev.classList.add("fa", "fa-angle-double-left", "mr-1");
         buttonPrev.insertAdjacentElement("afterbegin", iconPrev);
-        
+
         const iconNext = document.createElement("i");
         iconNext.classList.add("fa", "fa-angle-double-right", "ml-1");
         buttonNext.insertAdjacentElement("beforeend", iconNext);
-        
+
         paginationWrapper.appendChild(buttonPrev);
+        paginationWrapper.appendChild(pageNumber);
         paginationWrapper.appendChild(buttonNext);
 
         // Table
@@ -152,6 +177,31 @@ function build_report() {
             td.textContent = arr.length === index + 1 ? "pending" : value;
             tr.appendChild(td);
           });
+          // Status buttons
+          const tdButtons = document.createElement("td");
+          tdButtons.classList.add("text-center");
+          tdButtons.style.minWidth = "100px";
+
+          const deleteButton = document.createElement("button");
+          deleteButton.classList.add("btn", "btn-sm", "btn-danger", "mx-1", "btn-delete");
+          deleteButton.id = "deleteButton" + values[0];
+          deleteButton.dataset.id = values[0];
+          const deleteIcon = document.createElement("i");
+          deleteIcon.dataset.id = values[0];
+          deleteIcon.classList.add("fa", "fa-trash");
+          deleteButton.appendChild(deleteIcon);
+
+          const deliveredButton = document.createElement("button");
+          deliveredButton.classList.add("btn", "btn-sm", "mx-1", "btn-delivered");
+          deliveredButton.id = "deliveredButton" + values[0];
+          const deliveredIcon = document.createElement("i");
+          deliveredIcon.classList.add("fa", "fa-check");
+          deliveredButton.appendChild(deliveredIcon);
+
+          tdButtons.appendChild(deleteButton);
+          tdButtons.appendChild(deliveredButton);
+          tr.appendChild(tdButtons);
+
           tbody.appendChild(tr);
         })
 
@@ -162,19 +212,80 @@ function build_report() {
         fragment.appendChild(paginationWrapper);
         document.getElementById("shippingReport").appendChild(fragment);
       }
-      
-      const shippingReport = document.getElementById("shippingReport");
-      shippingReport.addEventListener("click", reportClick);
-      
+
       function reportClick(e) {
         const target = e.target;
-        console.log(target);
+        const buttonPrevEl = target.classList.contains("btn-prev") || target.parentElement.classList.contains("btn-prev");
+        const buttonNextEl = target.classList.contains("btn-next") || target.parentElement.classList.contains("btn-next");
+        const buttonDeleteEl = target.classList.contains("btn-delete") || target.parentElement.classList.contains("btn-delete");
+
+        if (buttonPrevEl) {
+          changePage("prev");
+        }
+
+        if (buttonNextEl) {
+          changePage("next");
+        }
+
+        if (buttonDeleteEl) {
+          const id = target.dataset.id;
+          const indexArr = data.findIndex(item => item.id === id);
+          console.log(indexArr);
+          deleteRow(id, indexArr);
+        }
       }
-      
+
+      async function deleteRow(id, indexArr) {
+        await fetch('/booking/shipping-delete.php?id=' + id, {
+          method: 'POST',
+        }).then(response => {
+          data.splice(indexArr, 1);
+          totalPagesCount();
+          if (totalNumbersOfPages < currentPageNumber) {
+            currentPageNumber = totalNumbersOfPages;
+          }
+          changePage("current");
+          console.log("Success");
+          return response;
+        }).catch(err => console.log(err));
+      }
+
+      const buttonPrev = document.getElementById("btnPrev");
+      const buttonNext = document.getElementById("btnNext");
+
+      function changePage(val) {
+        if (val === "next") {
+          if (currentPageNumber === totalNumbersOfPages) {
+            return;
+          }
+          currentPageNumber++;
+          reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
+        }
+
+        if (val === "prev") {
+          if (currentPageNumber === 1) {
+            return;
+          }
+          currentPageNumber--;
+          if (currentPageNumber === 1) {
+            reportRender(data.slice(currentPageNumber - 1, itemsPerPage));
+          } else {
+            reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
+          }
+        }
+
+        if (val === "current") {
+          if (currentPageNumber === 1) {
+            reportRender(data.slice(0, itemsPerPage));
+          } else {
+            reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
+          }
+        }
+      }
+
     })();
 
   </script>
-
 </body>
 
 </html>
