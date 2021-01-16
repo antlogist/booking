@@ -168,7 +168,16 @@ function build_report() {
       
       function reportClick(e) {
         const target = e.target;
-        console.log(target);
+        const buttonPrevEl = target.classList.contains("btn-prev");
+        const buttonNextEl = target.classList.contains("btn-next");
+        
+        if(buttonPrevEl) {
+          console.log("btn-prev-el");
+        }
+        
+        if(buttonNextEl) {
+          console.log("btn-next-el");
+        }
       }
       
     })();
