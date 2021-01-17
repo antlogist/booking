@@ -258,7 +258,7 @@ function build_report() {
           }).then(response => {
             data[indexArr]["status"] = status;
             const statusTd = document.getElementById("status" + id);
-            statusTd.text = status;
+            statusTd.textContent = status;
             console.log("Success");
             return response;
           }).catch(err => console.log(err));
