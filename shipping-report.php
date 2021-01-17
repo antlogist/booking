@@ -45,7 +45,29 @@ function build_report() {
 </head>
 
 <body>
+  <div class="spinner-border-wrapper d-none" id="spinner">
+    <div class="spinner-border text-light" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
   <style>
+    .spinner-border-wrapper {
+      position: fixed;
+      display: -webkit-flex;
+      display: -moz-flex;
+      display: -ms-flex;
+      display: -o-flex;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      background-color: rgba(0,0,0,0.15);
+    }
+
     #shippingReport table {
       font-size: 14px;
     }
@@ -178,13 +200,17 @@ function build_report() {
             const td = document.createElement("td");
 
             td.textContent = (arr.length === index + 1 & (value === null || value === "")) ? "pending" : value;
+
+            if (arr.length === index + 1) {
+              td.id = "status" + item.id;
+            }
+
             tr.appendChild(td);
           });
           // Status buttons
           const tdButtons = document.createElement("td");
           tdButtons.classList.add("text-center");
           tdButtons.style.minWidth = "100px";
-
           const deleteButton = document.createElement("button");
           deleteButton.classList.add("btn", "btn-sm", "btn-danger", "mx-1", "btn-delete");
           deleteButton.id = "deleteButton" + values[0];
@@ -194,15 +220,20 @@ function build_report() {
           deleteIcon.classList.add("fa", "fa-trash");
           deleteButton.appendChild(deleteIcon);
 
-          const deliveredButton = document.createElement("button");
-          deliveredButton.classList.add("btn", "btn-sm", "mx-1", "btn-delivered");
-          deliveredButton.id = "deliveredButton" + values[0];
-          const deliveredIcon = document.createElement("i");
-          deliveredIcon.classList.add("fa", "fa-check");
-          deliveredButton.appendChild(deliveredIcon);
+          const statusButton = document.createElement("button");
+          statusButton.classList.add("btn", "btn-sm", "mx-1", "btn-status");
+          if (item.status === "done") {
+            statusButton.classList.add("status-done");
+          }
+          statusButton.id = "statusButton" + values[0];
+          statusButton.dataset.id = values[0];
+          const statusIcon = document.createElement("i");
+          statusIcon.dataset.id = values[0];
+          statusIcon.classList.add("fa", "fa-check");
+          statusButton.appendChild(statusIcon);
 
           tdButtons.appendChild(deleteButton);
-          tdButtons.appendChild(deliveredButton);
+          tdButtons.appendChild(statusButton);
           tr.appendChild(tdButtons);
 
           tbody.appendChild(tr);
@@ -221,6 +252,7 @@ function build_report() {
         const buttonPrevEl = target.classList.contains("btn-prev") || target.parentElement.classList.contains("btn-prev");
         const buttonNextEl = target.classList.contains("btn-next") || target.parentElement.classList.contains("btn-next");
         const buttonDeleteEl = target.classList.contains("btn-delete") || target.parentElement.classList.contains("btn-delete");
+        const buttonStatusEl = target.classList.contains("btn-status") || target.parentElement.classList.contains("btn-status");
 
         if (buttonPrevEl) {
           changePage("prev");
@@ -233,14 +265,41 @@ function build_report() {
         if (buttonDeleteEl) {
           const id = target.dataset.id;
           const indexArr = data.findIndex(item => item.id === id);
-          console.log(indexArr);
           deleteRow(id, indexArr);
+        }
+
+        if (buttonStatusEl) {
+          const id = target.dataset.id;
+          const indexArr = data.findIndex(item => item.id === id);
+          const button = document.getElementById("statusButton" + id);
+          if (data[indexArr]["status"] === "pending") {
+            button.classList.add("stauts-done");
+            changeStatus(id, indexArr, "done");
+          } else {
+            button.classList.remove("stauts-done");
+            changeStatus(id, indexArr, "pending");
+          }
+
         }
       }
 
-      async function deleteRow(id, indexArr) {
+      async function changeStatus(id, indexArr, status) {
+        spinnerShow(true);
+        await fetch('/booking/shipping-status.php?id=' + id + '&status=' + status, {
+          method: 'POST',
+        }).then(response => {
+          data[indexArr]["status"] = status;
+          const statusTd = document.getElementById("status" + id);
+          statusTd.textContent = status;
+          console.log("Success");
+          spinnerShow(false);
+          return response;
+        }).catch(err => console.log(err));
+      }
 
+      async function deleteRow(id, indexArr) {
         if (confirm('Are you sure you want to delete the row id ' + id + '?')) {
+          spinnerShow(true);
           await fetch('/booking/shipping-delete.php?id=' + id, {
             method: 'POST',
           }).then(response => {
@@ -251,6 +310,7 @@ function build_report() {
             }
             changePage("current");
             console.log("Success");
+            spinnerShow(false);
             return response;
           }).catch(err => console.log(err));
         } else {
@@ -262,8 +322,10 @@ function build_report() {
       const buttonNext = document.getElementById("btnNext");
 
       function changePage(val) {
+        spinnerShow(true);
         if (val === "next") {
           if (currentPageNumber === totalNumbersOfPages) {
+            spinnerShow(false);
             return;
           }
           currentPageNumber++;
@@ -272,6 +334,7 @@ function build_report() {
 
         if (val === "prev") {
           if (currentPageNumber === 1) {
+            spinnerShow(false);
             return;
           }
           currentPageNumber--;
@@ -288,6 +351,16 @@ function build_report() {
           } else {
             reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
           }
+        }
+        spinnerShow(false);
+      }
+      
+      function spinnerShow(bool) {
+        const spinner = document.getElementById("spinner");
+        if (bool) {
+          spinner.classList.remove("d-none");
+        } else {
+          spinner.classList.add("d-none");
         }
       }
 
