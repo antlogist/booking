@@ -45,7 +45,29 @@ function build_report() {
 </head>
 
 <body>
+  <div class="spinner-border-wrapper d-none" id="spinner">
+    <div class="spinner-border text-light" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
   <style>
+    .spinner-border-wrapper {
+      position: fixed;
+      display: -webkit-flex;
+      display: -moz-flex;
+      display: -ms-flex;
+      display: -o-flex;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      background-color: rgba(0,0,0,0.15);
+    }
+
     #shippingReport table {
       font-size: 14px;
     }
@@ -262,6 +284,7 @@ function build_report() {
       }
 
       async function changeStatus(id, indexArr, status) {
+        spinnerShow(true);
         await fetch('/booking/shipping-status.php?id=' + id + '&status=' + status, {
           method: 'POST',
         }).then(response => {
@@ -269,12 +292,14 @@ function build_report() {
           const statusTd = document.getElementById("status" + id);
           statusTd.textContent = status;
           console.log("Success");
+          spinnerShow(false);
           return response;
         }).catch(err => console.log(err));
       }
 
       async function deleteRow(id, indexArr) {
         if (confirm('Are you sure you want to delete the row id ' + id + '?')) {
+          spinnerShow(true);
           await fetch('/booking/shipping-delete.php?id=' + id, {
             method: 'POST',
           }).then(response => {
@@ -285,6 +310,7 @@ function build_report() {
             }
             changePage("current");
             console.log("Success");
+            spinnerShow(false);
             return response;
           }).catch(err => console.log(err));
         } else {
@@ -296,8 +322,10 @@ function build_report() {
       const buttonNext = document.getElementById("btnNext");
 
       function changePage(val) {
+        spinnerShow(true);
         if (val === "next") {
           if (currentPageNumber === totalNumbersOfPages) {
+            spinnerShow(false);
             return;
           }
           currentPageNumber++;
@@ -306,6 +334,7 @@ function build_report() {
 
         if (val === "prev") {
           if (currentPageNumber === 1) {
+            spinnerShow(false);
             return;
           }
           currentPageNumber--;
@@ -322,6 +351,16 @@ function build_report() {
           } else {
             reportRender(data.slice((currentPageNumber - 1) * itemsPerPage, ((currentPageNumber - 1) * itemsPerPage) + itemsPerPage));
           }
+        }
+        spinnerShow(false);
+      }
+      
+      function spinnerShow(bool) {
+        const spinner = document.getElementById("spinner");
+        if (bool) {
+          spinner.classList.remove("d-none");
+        } else {
+          spinner.classList.add("d-none");
         }
       }
 
