@@ -222,8 +222,11 @@ function build_report() {
 
           const statusButton = document.createElement("button");
           statusButton.classList.add("btn", "btn-sm", "mx-1", "btn-status");
+          console.log(item.status)
           if (item.status === "done") {
-            statusButton.classList.add("status-done");
+            statusButton.classList.add("status-done", "btn-danger");
+          } else {
+            statusButton.classList.remove("status-done", "btn-danger");
           }
           statusButton.id = "statusButton" + values[0];
           statusButton.dataset.id = values[0];
@@ -272,14 +275,6 @@ function build_report() {
           const id = target.dataset.id;
           const indexArr = data.findIndex(item => item.id === id);
           const button = document.getElementById("statusButton" + id);
-          if (data[indexArr]["status"] === "pending") {
-            button.classList.add("stauts-done");
-            changeStatus(id, indexArr, "done");
-          } else {
-            button.classList.remove("stauts-done");
-            changeStatus(id, indexArr, "pending");
-          }
-
         }
       }
 
@@ -289,8 +284,7 @@ function build_report() {
           method: 'POST',
         }).then(response => {
           data[indexArr]["status"] = status;
-          const statusTd = document.getElementById("status" + id);
-          statusTd.textContent = status;
+          changePage("current");
           console.log("Success");
           spinnerShow(false);
           return response;
