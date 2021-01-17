@@ -178,11 +178,11 @@ function build_report() {
             const td = document.createElement("td");
 
             td.textContent = (arr.length === index + 1 & (value === null || value === "")) ? "pending" : value;
-            
+
             if (arr.length === index + 1) {
               td.id = "status" + item.id;
             }
-            
+
             tr.appendChild(td);
           });
           // Status buttons
@@ -199,17 +199,17 @@ function build_report() {
           deleteIcon.classList.add("fa", "fa-trash");
           deleteButton.appendChild(deleteIcon);
 
-          const deliveredButton = document.createElement("button");
-          deliveredButton.classList.add("btn", "btn-sm", "mx-1", "btn-delivered");
-          deliveredButton.id = "deliveredButton" + values[0];
-          deliveredButton.dataset.id = values[0];
+          const statusButton = document.createElement("button");
+          statusButton.classList.add("btn", "btn-sm", "mx-1", "btn-status");
+          statusButton.id = "statusButton" + values[0];
+          statusButton.dataset.id = values[0];
           const deliveredIcon = document.createElement("i");
           deliveredIcon.dataset.id = values[0];
           deliveredIcon.classList.add("fa", "fa-check");
-          deliveredButton.appendChild(deliveredIcon);
+          statusButton.appendChild(deliveredIcon);
 
           tdButtons.appendChild(deleteButton);
-          tdButtons.appendChild(deliveredButton);
+          tdButtons.appendChild(statusButton);
           tr.appendChild(tdButtons);
 
           tbody.appendChild(tr);
@@ -228,7 +228,7 @@ function build_report() {
         const buttonPrevEl = target.classList.contains("btn-prev") || target.parentElement.classList.contains("btn-prev");
         const buttonNextEl = target.classList.contains("btn-next") || target.parentElement.classList.contains("btn-next");
         const buttonDeleteEl = target.classList.contains("btn-delete") || target.parentElement.classList.contains("btn-delete");
-        const buttonDeliveredEl = target.classList.contains("btn-delivered") || target.parentElement.classList.contains("btn-delivered");
+        const buttonStatusEl = target.classList.contains("btn-status") || target.parentElement.classList.contains("btn-status");
 
         if (buttonPrevEl) {
           changePage("prev");
@@ -243,25 +243,30 @@ function build_report() {
           const indexArr = data.findIndex(item => item.id === id);
           deleteRow(id, indexArr);
         }
-        
-        if (buttonDeliveredEl) {
+
+        if (buttonStatusEl) {
           const id = target.dataset.id;
           const indexArr = data.findIndex(item => item.id === id);
-          console.log(indexArr);
-          changeStatus(id, indexArr, "done");
+          const button = document.getElementById("statusButton" + id);
+          if (data[indexArr]["status"] === "pending") {
+            changeStatus(id, indexArr, "done");
+          } else {
+            changeStatus(id, indexArr, "pending");
+          }
+
         }
       }
-      
+
       async function changeStatus(id, indexArr, status) {
-          await fetch('/booking/shipping-status.php?id=' + id + '&status=' + status, {
-            method: 'POST',
-          }).then(response => {
-            data[indexArr]["status"] = status;
-            const statusTd = document.getElementById("status" + id);
-            statusTd.textContent = status;
-            console.log("Success");
-            return response;
-          }).catch(err => console.log(err));
+        await fetch('/booking/shipping-status.php?id=' + id + '&status=' + status, {
+          method: 'POST',
+        }).then(response => {
+          data[indexArr]["status"] = status;
+          const statusTd = document.getElementById("status" + id);
+          statusTd.textContent = status;
+          console.log("Success");
+          return response;
+        }).catch(err => console.log(err));
       }
 
       async function deleteRow(id, indexArr) {
