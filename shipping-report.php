@@ -189,7 +189,6 @@ function build_report() {
           const tdButtons = document.createElement("td");
           tdButtons.classList.add("text-center");
           tdButtons.style.minWidth = "100px";
-
           const deleteButton = document.createElement("button");
           deleteButton.classList.add("btn", "btn-sm", "btn-danger", "mx-1", "btn-delete");
           deleteButton.id = "deleteButton" + values[0];
@@ -201,12 +200,15 @@ function build_report() {
 
           const statusButton = document.createElement("button");
           statusButton.classList.add("btn", "btn-sm", "mx-1", "btn-status");
+          if (item.status === "done") {
+            statusButton.classList.add("status-done");
+          }
           statusButton.id = "statusButton" + values[0];
           statusButton.dataset.id = values[0];
-          const deliveredIcon = document.createElement("i");
-          deliveredIcon.dataset.id = values[0];
-          deliveredIcon.classList.add("fa", "fa-check");
-          statusButton.appendChild(deliveredIcon);
+          const statusIcon = document.createElement("i");
+          statusIcon.dataset.id = values[0];
+          statusIcon.classList.add("fa", "fa-check");
+          statusButton.appendChild(statusIcon);
 
           tdButtons.appendChild(deleteButton);
           tdButtons.appendChild(statusButton);
@@ -249,8 +251,10 @@ function build_report() {
           const indexArr = data.findIndex(item => item.id === id);
           const button = document.getElementById("statusButton" + id);
           if (data[indexArr]["status"] === "pending") {
+            button.classList.add("stauts-done");
             changeStatus(id, indexArr, "done");
           } else {
+            button.classList.remove("stauts-done");
             changeStatus(id, indexArr, "pending");
           }
 
