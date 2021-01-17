@@ -159,10 +159,13 @@ function build_report() {
 
         // Th
         const thArr = Object.keys(reportData[0]);
-        thArr.map((item) => {
+        thArr.map((item, index) => {
           const th = document.createElement("th");
           th.setAttribute("scope", "col");
           th.textContent = item;
+          if (index === 1) {
+            th.style.minWidth = "100px";
+          }
           theadTr.appendChild(th);
         })
 
@@ -174,7 +177,7 @@ function build_report() {
           values.map((value, index, arr) => {
             const td = document.createElement("td");
 
-            td.textContent = arr.length === index + 1 ? "pending" : value;
+            td.textContent = (arr.length === index + 1 & (value === null || value === "")) ? "pending" : value;
             tr.appendChild(td);
           });
           // Status buttons
@@ -236,18 +239,23 @@ function build_report() {
       }
 
       async function deleteRow(id, indexArr) {
-        await fetch('/booking/shipping-delete.php?id=' + id, {
-          method: 'POST',
-        }).then(response => {
-          data.splice(indexArr, 1);
-          totalPagesCount();
-          if (totalNumbersOfPages < currentPageNumber) {
-            currentPageNumber = totalNumbersOfPages;
-          }
-          changePage("current");
-          console.log("Success");
-          return response;
-        }).catch(err => console.log(err));
+
+        if (confirm('Are you sure you want to delete the row id ' + id + '?')) {
+          await fetch('/booking/shipping-delete.php?id=' + id, {
+            method: 'POST',
+          }).then(response => {
+            data.splice(indexArr, 1);
+            totalPagesCount();
+            if (totalNumbersOfPages < currentPageNumber) {
+              currentPageNumber = totalNumbersOfPages;
+            }
+            changePage("current");
+            console.log("Success");
+            return response;
+          }).catch(err => console.log(err));
+        } else {
+          return;
+        }
       }
 
       const buttonPrev = document.getElementById("btnPrev");
