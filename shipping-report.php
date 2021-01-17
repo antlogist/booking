@@ -236,18 +236,23 @@ function build_report() {
       }
 
       async function deleteRow(id, indexArr) {
-        await fetch('/booking/shipping-delete.php?id=' + id, {
-          method: 'POST',
-        }).then(response => {
-          data.splice(indexArr, 1);
-          totalPagesCount();
-          if (totalNumbersOfPages < currentPageNumber) {
-            currentPageNumber = totalNumbersOfPages;
-          }
-          changePage("current");
-          console.log("Success");
-          return response;
-        }).catch(err => console.log(err));
+
+        if (confirm('Are you sure you want to delete the row id ' + id + '?')) {
+          await fetch('/booking/shipping-delete.php?id=' + id, {
+            method: 'POST',
+          }).then(response => {
+            data.splice(indexArr, 1);
+            totalPagesCount();
+            if (totalNumbersOfPages < currentPageNumber) {
+              currentPageNumber = totalNumbersOfPages;
+            }
+            changePage("current");
+            console.log("Success");
+            return response;
+          }).catch(err => console.log(err));
+        } else {
+          return;
+        }
       }
 
       const buttonPrev = document.getElementById("btnPrev");
