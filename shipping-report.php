@@ -113,6 +113,9 @@ function build_report() {
     (function report() {
 
       const data = <?php echo build_report(); ?>;
+      
+      data.sort((a, b) => (a.date > b.date) ? 1 : (a.date === b.date) ? (new Date(a.timeslot) > new Date(b.timeslot) ? 1 : -1) : -1 );
+      
       let currentPageNumber = 1;
       const itemsPerPage = 5;
       let totalNumbersOfPages = "";
