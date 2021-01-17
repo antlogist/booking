@@ -178,6 +178,11 @@ function build_report() {
             const td = document.createElement("td");
 
             td.textContent = (arr.length === index + 1 & (value === null || value === "")) ? "pending" : value;
+            
+            if (arr.length === index + 1) {
+              td.id = "status" + item.id;
+            }
+            
             tr.appendChild(td);
           });
           // Status buttons
@@ -197,7 +202,9 @@ function build_report() {
           const deliveredButton = document.createElement("button");
           deliveredButton.classList.add("btn", "btn-sm", "mx-1", "btn-delivered");
           deliveredButton.id = "deliveredButton" + values[0];
+          deliveredButton.dataset.id = values[0];
           const deliveredIcon = document.createElement("i");
+          deliveredIcon.dataset.id = values[0];
           deliveredIcon.classList.add("fa", "fa-check");
           deliveredButton.appendChild(deliveredIcon);
 
@@ -221,6 +228,7 @@ function build_report() {
         const buttonPrevEl = target.classList.contains("btn-prev") || target.parentElement.classList.contains("btn-prev");
         const buttonNextEl = target.classList.contains("btn-next") || target.parentElement.classList.contains("btn-next");
         const buttonDeleteEl = target.classList.contains("btn-delete") || target.parentElement.classList.contains("btn-delete");
+        const buttonDeliveredEl = target.classList.contains("btn-delivered") || target.parentElement.classList.contains("btn-delivered");
 
         if (buttonPrevEl) {
           changePage("prev");
@@ -233,13 +241,30 @@ function build_report() {
         if (buttonDeleteEl) {
           const id = target.dataset.id;
           const indexArr = data.findIndex(item => item.id === id);
-          console.log(indexArr);
           deleteRow(id, indexArr);
         }
+        
+        if (buttonDeliveredEl) {
+          const id = target.dataset.id;
+          const indexArr = data.findIndex(item => item.id === id);
+          console.log(indexArr);
+          changeStatus(id, indexArr, "done");
+        }
+      }
+      
+      async function changeStatus(id, indexArr, status) {
+          await fetch('/booking/shipping-status.php?id=' + id + '&status=' + status, {
+            method: 'POST',
+          }).then(response => {
+            data[indexArr]["status"] = status;
+            const statusTd = document.getElementById("status" + id);
+            statusTd.text = status;
+            console.log("Success");
+            return response;
+          }).catch(err => console.log(err));
       }
 
       async function deleteRow(id, indexArr) {
-
         if (confirm('Are you sure you want to delete the row id ' + id + '?')) {
           await fetch('/booking/shipping-delete.php?id=' + id, {
             method: 'POST',
