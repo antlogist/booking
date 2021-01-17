@@ -174,7 +174,7 @@ function build_report() {
           values.map((value, index, arr) => {
             const td = document.createElement("td");
 
-            td.textContent = arr.length === index + 1 ? "pending" : value;
+            td.textContent =( arr.length === index + 1 &( value === null || value === "")) ? "pending" : value;
             tr.appendChild(td);
           });
           // Status buttons
