@@ -65,7 +65,7 @@ function build_report() {
       left: 0;
       top: 0;
       z-index: 1000;
-      background-color: rgba(0,0,0,0.15);
+      background-color: rgba(0, 0, 0, 0.15);
     }
 
     #shippingReport table {
@@ -83,6 +83,10 @@ function build_report() {
 
     table tbody tr {
       cursor: pointer;
+    }
+    
+    table tbody tr.done {
+      background-color: #efffb8;
     }
 
     .page-number {
@@ -109,8 +113,11 @@ function build_report() {
     (function report() {
 
       const data = <?php echo build_report(); ?>;
+      
+      data.sort((a, b) => (a.date > b.date) ? 1 : (a.date === b.date) ? (new Date(a.timeslot) > new Date(b.timeslot) ? 1 : -1) : -1 );
+      
       let currentPageNumber = 1;
-      const itemsPerPage = 4;
+      const itemsPerPage = 5;
       let totalNumbersOfPages = "";
 
       function totalPagesCount() {
@@ -171,7 +178,7 @@ function build_report() {
 
         // Table
         const table = document.createElement("table");
-        table.classList.add("table", "table-striped", "table-bordered", "table-hover", "table-sm", "table-responsive-md");
+        table.classList.add("table", "table-bordered", "table-hover", "table-sm", "table-responsive-md");
 
         // Head
         const thead = document.createElement("thead");
@@ -223,7 +230,11 @@ function build_report() {
           const statusButton = document.createElement("button");
           statusButton.classList.add("btn", "btn-sm", "mx-1", "btn-status");
           if (item.status === "done") {
-            statusButton.classList.add("status-done");
+            statusButton.classList.add("status-done", "btn-danger");
+            tr.classList.add("done");
+          } else {
+            statusButton.classList.remove("status-done", "btn-danger");
+            tr.classList.remove("done");
           }
           statusButton.id = "statusButton" + values[0];
           statusButton.dataset.id = values[0];
@@ -273,10 +284,8 @@ function build_report() {
           const indexArr = data.findIndex(item => item.id === id);
           const button = document.getElementById("statusButton" + id);
           if (data[indexArr]["status"] === "pending") {
-            button.classList.add("stauts-done");
             changeStatus(id, indexArr, "done");
           } else {
-            button.classList.remove("stauts-done");
             changeStatus(id, indexArr, "pending");
           }
 
@@ -289,8 +298,7 @@ function build_report() {
           method: 'POST',
         }).then(response => {
           data[indexArr]["status"] = status;
-          const statusTd = document.getElementById("status" + id);
-          statusTd.textContent = status;
+          changePage("current");
           console.log("Success");
           spinnerShow(false);
           return response;
@@ -354,7 +362,7 @@ function build_report() {
         }
         spinnerShow(false);
       }
-      
+
       function spinnerShow(bool) {
         const spinner = document.getElementById("spinner");
         if (bool) {
