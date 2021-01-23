@@ -48,8 +48,8 @@ $mysqli = $conn;
 
 $duration = 60;
 $cleanup = 0;
-$start = "08:00";
-$end = "18:00";
+$start = "10:00";
+$end = "14:00";
 
 function timeslots($duration, $cleanup, $start, $end) {
   $start = new DateTime($start);
