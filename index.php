@@ -83,7 +83,8 @@ function build_calendar($month, $year) {
     
     $today = $date == date("Y-m-d") ? "table-active" : "";
     
-    if ($date < date("Y-m-d")) {
+    
+    if ($date < date("Y-m-d") || $date > date ( 'Y-m-d' , strtotime ( $Date . ' + 2 days' ))) {
       $calendar.= "<td style='width: 14%;'><h4>$currentDay</h4><a href='#' class='btn btn-danger btn-sm'>N/A</a></td>";
     } else {
       $totalbookings = checkSlots($mysqli, $date);
